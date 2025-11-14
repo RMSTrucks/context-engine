@@ -1,0 +1,50 @@
+{
+  "name": "vision-capture",
+  "version": "0.1.0",
+  "description": "On-demand screen capture with OCR for context awareness",
+  "author": "Claude 2.0",
+  "license": "MIT",
+  "type": "stdio",
+  "command": {
+    "python": [
+      "-m",
+      "mcp_servers.vision_capture.server"
+    ]
+  },
+  "tools": [
+    {
+      "name": "capture_screen",
+      "description": "Capture full screen with OCR",
+      "category": "vision"
+    },
+    {
+      "name": "capture_region",
+      "description": "Capture specific screen region with OCR",
+      "category": "vision"
+    },
+    {
+      "name": "get_window_title",
+      "description": "Get active window title",
+      "category": "vision"
+    },
+    {
+      "name": "search_captures",
+      "description": "Search previously captured text",
+      "category": "search"
+    }
+  ],
+  "requirements": [
+    "mcp>=1.0.0",
+    "mss>=9.0.0",
+    "Pillow>=10.0.0",
+    "pytesseract>=0.3.10",
+    "psutil>=5.9.0",
+    "pyyaml>=6.0"
+  ],
+  "configuration": {
+    "retention_days": 7,
+    "save_images": true,
+    "image_quality": 85,
+    "ocr_language": "en"
+  }
+}
