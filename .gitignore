@@ -32,6 +32,7 @@ context.db-shm
 context.db-wal
 captures/
 audio/
+!tests/audio/
 logs/
 chroma_context/
 
