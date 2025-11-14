@@ -90,9 +90,56 @@ class Database:
 
         # Phase 1: Vision Capture Schema
         vision_schema = """
-            self.connect()
+        -- Screen captures table
+        CREATE TABLE IF NOT EXISTS screen_captures (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            window_title TEXT,
+            ocr_text TEXT,
+            ocr_confidence REAL,
+            image_path TEXT,
+            image_hash TEXT UNIQUE,
+            trigger_reason TEXT,
+            metadata TEXT,  -- JSON string
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(image_hash)
+        );
 
-        schema = """
+        -- FTS5 full-text search index for OCR text
+        CREATE VIRTUAL TABLE IF NOT EXISTS screen_captures_fts USING fts5(
+            ocr_text,
+            window_title,
+            trigger_reason,
+            content='screen_captures',
+            content_rowid='id'
+        );
+
+        -- Triggers to keep FTS5 index in sync
+        CREATE TRIGGER IF NOT EXISTS screen_captures_ai AFTER INSERT ON screen_captures BEGIN
+            INSERT INTO screen_captures_fts(rowid, ocr_text, window_title, trigger_reason)
+            VALUES (new.id, new.ocr_text, new.window_title, new.trigger_reason);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS screen_captures_ad AFTER DELETE ON screen_captures BEGIN
+            DELETE FROM screen_captures_fts WHERE rowid = old.id;
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS screen_captures_au AFTER UPDATE ON screen_captures BEGIN
+            UPDATE screen_captures_fts
+            SET ocr_text = new.ocr_text,
+                window_title = new.window_title,
+                trigger_reason = new.trigger_reason
+            WHERE rowid = new.id;
+        END;
+
+        -- Index for fast retention cleanup
+        CREATE INDEX IF NOT EXISTS idx_screen_captures_timestamp
+        ON screen_captures(timestamp);
+
+        -- Index for deduplication
+        CREATE INDEX IF NOT EXISTS idx_screen_captures_hash
+        ON screen_captures(image_hash);
+        """
 
         try:
             self.connection.executescript(vision_schema)
