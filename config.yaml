@@ -1,0 +1,48 @@
+# Context Engine Configuration
+
+vision:
+  enabled: true
+  capture_interval: 300  # seconds (5 minutes)
+  ocr_language: en
+  retention_days: 7
+  save_images: true
+  image_quality: 85
+
+audio:
+  enabled: true
+  source: microphone  # microphone, system_audio, both
+  model: base.en      # whisper model
+  vad_enabled: true
+  retention_days: 90
+
+context:
+  stuck_detection: true
+  stuck_threshold_minutes: 10
+  proactive_suggestions: true
+  session_continuity: true
+
+vapi:
+  enabled: true
+  webhook_port: 5515
+  agents:
+    - remus
+    - genesis
+  signature_verification: true
+
+storage:
+  database: context.db
+  chromadb_path: chroma_context
+  encryption: false  # Optional AES encryption
+  backup_enabled: true
+  backup_interval_hours: 24
+
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: logs/context-engine.log
+  max_size_mb: 100
+  backup_count: 5
+
+performance:
+  max_memory_mb: 500
+  max_cpu_percent: 15
+  capture_threads: 2
