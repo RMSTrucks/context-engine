@@ -8,10 +8,11 @@ mss>=9.0.0
 Pillow>=10.0.0
 pytesseract>=0.3.10
 
-# Audio Capture (will be refined in Phase 2)
+# Audio Capture (Phase 2)
 pyaudio>=0.2.14
-faster-whisper>=0.10.0
+faster-whisper>=1.0.0
 webrtcvad>=2.0.10
+numpy>=1.24.0
 
 # Storage
 chromadb>=0.4.0
